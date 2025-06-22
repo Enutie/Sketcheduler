@@ -81,8 +81,8 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
-import allWarmupsData from '/src/data/warmups.json'; 
-import type { WarmupExercise } from '/src/types/warmup'; 
+import allWarmupsData from '../data/warmups.json';
+import type { WarmupExercise } from '../types/warmup';
 
 const DEFAULT_SESSION_DURATION_MINUTES = 10;
 const EXERCISES_TO_PICK_MIN = 2;

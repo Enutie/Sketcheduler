@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Warmup from '/src/components/WarmupSession.vue'
+import Warmup from './components/WarmupSession.vue'
 </script>
 
 <template>
