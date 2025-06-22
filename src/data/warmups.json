@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "name": "Superimposed Lines",
+    "examplePageUrl": "https://drawabox.com/lesson/1/superimposedlines/example"
+  },
+  {
+    "id": 2,
+    "name": "Ghosted Lines",
+    "examplePageUrl": "https://drawabox.com/lesson/1/ghostedlines/example"
+  },
+  {
+    "id": 3,
+    "name": "Ghosted Planes",
+    "examplePageUrl": "https://drawabox.com/lesson/1/ghostedplanes/example"
+  },
+  {
+    "id": 4,
+    "name": "Tables of Ellipses",
+    "examplePageUrl": "https://drawabox.com/lesson/1/tablesofellipses/example"
+  },
+  {
+    "id": 5,
+    "name": "Ellipses in Planes",
+    "examplePageUrl": "https://drawabox.com/lesson/1/ellipsesinplanes/example"
+  },
+  {
+    "id": 6,
+    "name": "Funnels",
+    "examplePageUrl": "https://drawabox.com/lesson/1/funnels/example"
+  },
+  {
+    "id": 7,
+    "name": "Plotted Perspective",
+    "examplePageUrl": "https://drawabox.com/lesson/1/plottedperspective/example"
+  },
+  {
+    "id": 8,
+    "name": "Rough Perspective (Boxes)",
+    "examplePageUrl": "https://drawabox.com/lesson/1/roughperspective/example"
+  },
+  {
+    "id": 9,
+    "name": "Rotated Boxes",
+    "examplePageUrl": "https://drawabox.com/lesson/1/rotatedboxes/example"
+  },
+  {
+    "id": 10,
+    "name": "Organic Perspective (Boxes)",
+    "examplePageUrl": "https://drawabox.com/lesson/1/organicperspective/example"
+  },
+    {
+    "id": 11,
+    "name": "Rotated Boxes (w/ Line Extensions - 250 Box Style)",
+    "examplePageUrl": "https://drawabox.com/lesson/250boxes/3/example"
+  }
+]
