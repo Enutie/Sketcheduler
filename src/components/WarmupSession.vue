@@ -2,18 +2,17 @@
   <div class="warmup-session-container">
     <h2>Drawabox Warm-up Session</h2>
 
-    <!-- Progress Selection -->
     <div class="progress-section">
       <h3>Select Your Progress</h3>
       <p class="progress-instruction">Check off the lessons and challenges you've completed:</p>
       <div class="progress-options">
-        <div 
-          v-for="lesson in allLessons" 
+        <div
+          v-for="lesson in allLessons"
           :key="lesson.id"
           class="progress-item"
         >
-          <input 
-            type="checkbox" 
+          <input
+            type="checkbox"
             :id="lesson.id"
             v-model="completedLessons"
             :value="lesson.id"
@@ -56,7 +55,7 @@
       </button>
       <button
         v-if="isSessionActive"
-        @click="stopWarmupSession(true)" 
+        @click="stopWarmupSession(true)"
         class="stop-button"
       >
         Stop Session Early
@@ -98,7 +97,6 @@
       </select>
     </div>
 
-    <!-- Available Exercises Summary -->
     <div v-if="allAvailableWarmups.length" class="available-exercises-summary">
       <h4>Available Exercises ({{ allAvailableWarmups.length }} total):</h4>
       <div class="exercises-by-lesson">
@@ -196,13 +194,12 @@ const updateAvailableWarmups = (): void => {
   });
   
   allAvailableWarmups.value = availableExercises;
-  selectedExercises.value = []; // Clear selected exercises when pool changes
+  selectedExercises.value = []; 
   sessionCompleteMessage.value = '';
   saveProgress();
 };
 
 onMounted(() => {
-  // Load lessons data
   if (warmupsData && (warmupsData as WarmupsData).lessons && Array.isArray((warmupsData as WarmupsData).lessons)) {
     allLessons.value = (warmupsData as WarmupsData).lessons;
   } else {
@@ -210,10 +207,8 @@ onMounted(() => {
     allLessons.value = [];
   }
   
-  // Load saved progress
   loadProgress();
   
-  // Update available warmups based on saved progress
   updateAvailableWarmups();
   
   timeLeftSeconds.value = sessionDurationMinutes.value * 60;
@@ -301,196 +296,320 @@ const handleGetOrStartWarmups = (): void => {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
 .warmup-session-container {
-  max-width: 800px;
-  margin: 20px auto;
+  max-width: 900px;
+  margin: 0 auto;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-family: sans-serif;
-  text-align: center;
-  background-color: #f9f9f9;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #f0f2f5; 
+  min-height: 100vh;
+  color: #333; 
 }
 
 h2 {
-  color: #333;
-  margin-bottom: 20px;
+  color: #2c3e50;
+  margin-bottom: 30px;
+  font-size: 2rem; 
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: -0.025em;
 }
 
 h3 {
-  color: #555;
-  margin-top: 20px;
-  margin-bottom: 10px;
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.25rem; 
+  font-weight: 600;
 }
 
 h4 {
-  color: #666;
-  margin-top: 15px;
-  margin-bottom: 8px;
+  color: #555;
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1rem; 
+  font-weight: 500;
 }
 
-.progress-section {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 20px;
-  margin-bottom: 20px;
+.progress-section,
+.selected-exercises-preview,
+.session-active-display,
+.available-exercises-summary,
+.settings {
+  background-color: #ffffff; 
+  border: 1px solid #e0e0e0; 
+  border-radius: 8px; 
+  padding: 24px;
+  margin-bottom: 24px;
   text-align: left;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); 
 }
 
 .progress-instruction {
-  color: #666;
-  margin-bottom: 15px;
-  font-style: italic;
+  color: #555;
+  margin-bottom: 16px;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .progress-options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 10px;
+  gap: 12px;
 }
 
 .progress-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
 }
 
+.progress-item:hover {
+  background-color: #f0f0f0;
+}
+
+.progress-item:has(input:checked) {
+  background-color: #10b981; 
+  border-color: #059669;
+  color: white;
+}
+.progress-item:has(input:checked) label {
+  color: white; 
+}
+
+
 .progress-item input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
+  accent-color: #10b981;
+  cursor: pointer;
 }
 
 .progress-item label {
   cursor: pointer;
   user-select: none;
+  font-weight: 500;
+  color: #333; 
 }
 
 .available-exercises-summary {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 15px;
-  margin-top: 20px;
-  text-align: left;
+  margin-top: 24px;
 }
 
 .exercises-by-lesson {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .lesson-exercises {
-  font-size: 0.9em;
+  font-size: 0.95rem;
+  padding: 12px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  border-left: 3px solid #3b82f6;
 }
 
 .lesson-exercises strong {
-  color: #333;
+  color: #1f2937;
   display: block;
-  margin-bottom: 3px;
+  margin-bottom: 6px;
+  font-weight: 600;
 }
 
 .exercise-names {
-  color: #666;
-  margin-left: 15px;
+  color: #555;
+  line-height: 1.5;
 }
 
 .controls {
-  margin: 20px 0;
+  margin: 24px 0;
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 button {
-  padding: 10px 20px;
-  font-size: 1em;
+  padding: 12px 24px; 
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
   border: none;
-  border-radius: 5px;
-  background-color: #007bff; 
+  border-radius: 6px;
+  background-color: #3b82f6; 
   color: white;
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.2s ease;
 }
 
 button:hover:not(:disabled) {
-  background-color: #0056b3;
+  background-color: #2563eb; 
+}
+
+button:active:not(:disabled) {
+  background-color: #1d4ed8; 
 }
 
 button:disabled {
-  background-color: #cccccc;
+  background-color: #adb5bd; 
   cursor: not-allowed;
 }
 
 button.stop-button {
-  background-color: #dc3545; 
+  background-color: #ef4444; 
 }
+
 button.stop-button:hover:not(:disabled) {
-  background-color: #c82333;
+  background-color: #dc2626; 
 }
 
 .selected-exercises-preview ul,
 .session-active-display ul {
   list-style: none;
   padding: 0;
-  margin-bottom: 15px;
+  margin-bottom: 16px;
+  display: grid;
+  gap: 10px;
 }
 
 .selected-exercises-preview li,
 .session-active-display li {
-  background-color: #e9ecef;
-  padding: 8px;
-  margin-bottom: 5px;
-  border-radius: 4px;
-  color: #333;
+  background-color: #f9f9f9;
+  padding: 16px;
+  border-radius: 6px;
+  color: #1f2937;
+  border-left: 3px solid #10b981; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .example-link {
-  color: #007bff;
+  color: #3b82f6;
   text-decoration: none;
-  margin-left: 8px;
-  font-size: 0.9em;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  background-color: #e7f3ff; 
+  border-radius: 4px;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .example-link:hover {
-  text-decoration: underline;
+  background-color: #d1e7ff;
+  color: #1d4ed8;
+}
+
+.session-active-display {
+  border: 1px solid #10b981; 
 }
 
 .session-active-display .instruction {
   font-style: italic;
-  color: #666;
-  margin-top: 15px;
+  color: #047857; 
+  margin-top: 16px;
+  font-size: 1rem;
+  text-align: center;
+  background-color: #e6fffa; 
+  padding: 12px;
+  border-radius: 4px;
 }
 
 .message {
-  padding: 15px;
-  margin: 20px 0;
-  border-radius: 5px;
+  padding: 16px 24px;
+  margin: 24px 0;
+  border-radius: 8px;
   text-align: center;
+  font-weight: 500;
+  font-size: 1rem;
 }
+
 .message.info {
-  background-color: #e0f7fa; 
-  color: #006064; 
-  border: 1px solid #b2ebf2;
+  background-color: #e0f2fe; 
+  color: #0c5464; 
+  border: 1px solid #b3e0f2;
 }
+
 .message.completion {
   background-color: #d4edda; 
   color: #155724; 
   border: 1px solid #c3e6cb;
-  font-weight: bold;
 }
 
 .settings {
-  margin-top: 30px;
-  padding-top: 15px;
-  border-top: 1px solid #ddd;
+  text-align: center;
 }
+
 .settings label {
-  margin-right: 10px;
+  margin-right: 12px;
+  font-weight: 500;
+  color: #374151;
 }
+
 .settings select {
-  padding: 5px;
-  border-radius: 4px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ced4da; 
+  background-color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.settings select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25); 
+}
+
+.settings select:hover {
+  border-color: #adb5bd;
+}
+
+@media (max-width: 640px) {
+  .warmup-session-container {
+    padding: 16px;
+  }
+  
+  h2 {
+    font-size: 1.75rem; 
+    margin-bottom: 24px;
+  }
+  
+  .progress-section,
+  .selected-exercises-preview,
+  .session-active-display,
+  .message,
+  .settings {
+    padding: 16px;
+  }
+  
+  .progress-options {
+    grid-template-columns: 1fr; 
+  }
+  
+  .controls {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  button {
+    width: 100%;
+    max-width: 300px; 
+  }
 }
 </style>
