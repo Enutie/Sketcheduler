@@ -1,57 +1,107 @@
-[
-  {
-    "id": 1,
-    "name": "Superimposed Lines",
-    "examplePageUrl": "https://drawabox.com/lesson/1/superimposedlines/example"
-  },
-  {
-    "id": 2,
-    "name": "Ghosted Lines",
-    "examplePageUrl": "https://drawabox.com/lesson/1/ghostedlines/example"
-  },
-  {
-    "id": 3,
-    "name": "Ghosted Planes",
-    "examplePageUrl": "https://drawabox.com/lesson/1/ghostedplanes/example"
-  },
-  {
-    "id": 4,
-    "name": "Tables of Ellipses",
-    "examplePageUrl": "https://drawabox.com/lesson/1/tablesofellipses/example"
-  },
-  {
-    "id": 5,
-    "name": "Ellipses in Planes",
-    "examplePageUrl": "https://drawabox.com/lesson/1/ellipsesinplanes/example"
-  },
-  {
-    "id": 6,
-    "name": "Funnels",
-    "examplePageUrl": "https://drawabox.com/lesson/1/funnels/example"
-  },
-  {
-    "id": 7,
-    "name": "Plotted Perspective",
-    "examplePageUrl": "https://drawabox.com/lesson/1/plottedperspective/example"
-  },
-  {
-    "id": 8,
-    "name": "Rough Perspective (Boxes)",
-    "examplePageUrl": "https://drawabox.com/lesson/1/roughperspective/example"
-  },
-  {
-    "id": 9,
-    "name": "Rotated Boxes",
-    "examplePageUrl": "https://drawabox.com/lesson/1/rotatedboxes/example"
-  },
-  {
-    "id": 10,
-    "name": "Organic Perspective (Boxes)",
-    "examplePageUrl": "https://drawabox.com/lesson/1/organicperspective/example"
-  },
+{
+  "lessons": [
     {
-    "id": 11,
-    "name": "Rotated Boxes (w/ Line Extensions - 250 Box Style)",
-    "examplePageUrl": "https://drawabox.com/lesson/250boxes/3/example"
-  }
-]
+      "id": "lesson1",
+      "name": "Lesson 1: Lines, Ellipses and Boxes",
+      "exercises": [
+        {
+          "id": 1,
+          "name": "Superimposed Lines",
+          "examplePageUrl": "https://drawabox.com/lesson/1/superimposedlines/example"
+        },
+        {
+          "id": 2,
+          "name": "Ghosted Lines",
+          "examplePageUrl": "https://drawabox.com/lesson/1/ghostedlines/example"
+        },
+        {
+          "id": 3,
+          "name": "Ghosted Planes",
+          "examplePageUrl": "https://drawabox.com/lesson/1/ghostedplanes/example"
+        },
+        {
+          "id": 4,
+          "name": "Tables of Ellipses",
+          "examplePageUrl": "https://drawabox.com/lesson/1/tablesofellipses/example"
+        },
+        {
+          "id": 5,
+          "name": "Ellipses in Planes",
+          "examplePageUrl": "https://drawabox.com/lesson/1/ellipsesinplanes/example"
+        },
+        {
+          "id": 6,
+          "name": "Funnels",
+          "examplePageUrl": "https://drawabox.com/lesson/1/funnels/example"
+        },
+        {
+          "id": 7,
+          "name": "Plotted Perspective",
+          "examplePageUrl": "https://drawabox.com/lesson/1/plottedperspective/example"
+        },
+        {
+          "id": 8,
+          "name": "Rough Perspective (Boxes)",
+          "examplePageUrl": "https://drawabox.com/lesson/1/roughperspective/example"
+        },
+        {
+          "id": 9,
+          "name": "Rotated Boxes",
+          "examplePageUrl": "https://drawabox.com/lesson/1/rotatedboxes/example"
+        },
+        {
+          "id": 10,
+          "name": "Organic Perspective (Boxes)",
+          "examplePageUrl": "https://drawabox.com/lesson/1/organicperspective/example"
+        }
+      ]
+    },
+    {
+      "id": "250boxes",
+      "name": "250 Box Challenge",
+      "exercises": [
+        {
+          "id": 11,
+          "name": "Rotated Boxes (w/ Line Extensions - 250 Box Style)",
+          "examplePageUrl": "https://drawabox.com/lesson/250boxes/3/example"
+        }
+      ]
+    },
+    {
+      "id": "lesson2",
+      "name": "Lesson 2: Organic Forms",
+      "exercises": [
+        {
+          "id": 12,
+          "name": "Arrows",
+          "examplePageUrl": "https://drawabox.com/lesson/2/organicarrows/example"
+        },
+        {
+          "id": 13,
+          "name": "Organic Forms with Contour Lines",
+          "examplePageUrl": "https://drawabox.com/lesson/2/contourlines/example"
+        },
+        {
+          "id": 14,
+          "name": "Texture Analysis",
+          "examplePageUrl": "https://drawabox.com/lesson/2/textureanalysis/example"
+        },
+        {
+          "id": 15,
+          "name": "Dissections",
+          "examplePageUrl": "https://drawabox.com/lesson/2/dissections/example"
+        },
+        {
+          "id": 16,
+          "name": "Form Intersections",
+          "examplePageUrl": "https://drawabox.com/lesson/2/formintersections/example"
+        },
+        {
+          "id": 17,
+          "name": "Organic Intersections",
+          "examplePageUrl": "https://drawabox.com/lesson/2/organicintersections/example"
+        }
+      ]
+    }
+  ]
+}

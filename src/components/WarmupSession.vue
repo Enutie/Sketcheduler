@@ -2,9 +2,31 @@
   <div class="warmup-session-container">
     <h2>Drawabox Warm-up Session</h2>
 
+    <!-- Progress Selection -->
+    <div class="progress-section">
+      <h3>Select Your Progress</h3>
+      <p class="progress-instruction">Check off the lessons and challenges you've completed:</p>
+      <div class="progress-options">
+        <div 
+          v-for="lesson in allLessons" 
+          :key="lesson.id"
+          class="progress-item"
+        >
+          <input 
+            type="checkbox" 
+            :id="lesson.id"
+            v-model="completedLessons"
+            :value="lesson.id"
+            @change="updateAvailableWarmups"
+          />
+          <label :for="lesson.id">{{ lesson.name }}</label>
+        </div>
+      </div>
+    </div>
+
     <div v-if="!isSessionActive && !allAvailableWarmups.length" class="message info">
       <p>Your warm-up pool is currently empty.</p>
-      <p>Complete Lesson 1 to add exercises to your warm-up pool.</p>
+      <p>Select completed lessons above to add exercises to your warm-up pool.</p>
     </div>
 
     <div v-if="!isSessionActive && selectedExercises.length" class="selected-exercises-preview">
@@ -76,18 +98,46 @@
       </select>
     </div>
 
+    <!-- Available Exercises Summary -->
+    <div v-if="allAvailableWarmups.length" class="available-exercises-summary">
+      <h4>Available Exercises ({{ allAvailableWarmups.length }} total):</h4>
+      <div class="exercises-by-lesson">
+        <div v-for="lesson in completedLessonsData" :key="lesson.id" class="lesson-exercises">
+          <strong>{{ lesson.name }}:</strong>
+          <span class="exercise-names">{{ lesson.exercises.map(e => e.name).join(', ') }}</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
-import allWarmupsData from '../data/warmups.json';
-import type { WarmupExercise } from '../types/warmup';
+import warmupsData from '../data/warmups.json';
+
+interface WarmupExercise {
+  id: number;
+  name: string;
+  examplePageUrl?: string;
+}
+
+interface Lesson {
+  id: string;
+  name: string;
+  exercises: WarmupExercise[];
+}
+
+interface WarmupsData {
+  lessons: Lesson[];
+}
 
 const DEFAULT_SESSION_DURATION_MINUTES = 10;
 const EXERCISES_TO_PICK_MIN = 2;
 const EXERCISES_TO_PICK_MAX = 3;
 
+const allLessons = ref<Lesson[]>([]);
+const completedLessons = ref<string[]>([]);
 const allAvailableWarmups = ref<WarmupExercise[]>([]);
 const selectedExercises = ref<WarmupExercise[]>([]);
 const sessionDurationMinutes = ref<number>(DEFAULT_SESSION_DURATION_MINUTES);
@@ -95,6 +145,10 @@ const timeLeftSeconds = ref<number>(sessionDurationMinutes.value * 60);
 const isSessionActive = ref<boolean>(false);
 const timerId = ref<number | null>(null);
 const sessionCompleteMessage = ref<string>('');
+
+const completedLessonsData = computed<Lesson[]>(() => {
+  return allLessons.value.filter(lesson => completedLessons.value.includes(lesson.id));
+});
 
 const formattedTimeLeft = computed<string>(() => {
   const minutes = Math.floor(timeLeftSeconds.value / 60);
@@ -115,13 +169,53 @@ const mainButtonText = computed<string>(() => {
   return 'Get Warm-up Exercises';
 });
 
-onMounted(() => {
-  if (allWarmupsData && Array.isArray(allWarmupsData) && allWarmupsData.length > 0) {
-    allAvailableWarmups.value = allWarmupsData as WarmupExercise[];
-  } else {
-    console.warn('Warm-up data is empty, not an array, or not in the expected format.');
-    allAvailableWarmups.value = []; 
+const loadProgress = (): void => {
+  const saved = localStorage.getItem('drawabox-progress');
+  if (saved) {
+    try {
+      completedLessons.value = JSON.parse(saved);
+    } catch (e) {
+      console.warn('Failed to parse saved progress, starting fresh');
+      completedLessons.value = [];
+    }
   }
+};
+
+const saveProgress = (): void => {
+  localStorage.setItem('drawabox-progress', JSON.stringify(completedLessons.value));
+};
+
+const updateAvailableWarmups = (): void => {
+  const availableExercises: WarmupExercise[] = [];
+  
+  completedLessons.value.forEach(lessonId => {
+    const lesson = allLessons.value.find(l => l.id === lessonId);
+    if (lesson) {
+      availableExercises.push(...lesson.exercises);
+    }
+  });
+  
+  allAvailableWarmups.value = availableExercises;
+  selectedExercises.value = []; // Clear selected exercises when pool changes
+  sessionCompleteMessage.value = '';
+  saveProgress();
+};
+
+onMounted(() => {
+  // Load lessons data
+  if (warmupsData && (warmupsData as WarmupsData).lessons && Array.isArray((warmupsData as WarmupsData).lessons)) {
+    allLessons.value = (warmupsData as WarmupsData).lessons;
+  } else {
+    console.warn('Warmups data is not in the expected format.');
+    allLessons.value = [];
+  }
+  
+  // Load saved progress
+  loadProgress();
+  
+  // Update available warmups based on saved progress
+  updateAvailableWarmups();
+  
   timeLeftSeconds.value = sessionDurationMinutes.value * 60;
 });
 
@@ -208,7 +302,7 @@ const handleGetOrStartWarmups = (): void => {
 
 <style scoped>
 .warmup-session-container {
-  max-width: 600px;
+  max-width: 800px;
   margin: 20px auto;
   padding: 20px;
   border: 1px solid #ccc;
@@ -227,6 +321,79 @@ h3 {
   color: #555;
   margin-top: 20px;
   margin-bottom: 10px;
+}
+
+h4 {
+  color: #666;
+  margin-top: 15px;
+  margin-bottom: 8px;
+}
+
+.progress-section {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.progress-instruction {
+  color: #666;
+  margin-bottom: 15px;
+  font-style: italic;
+}
+
+.progress-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 10px;
+}
+
+.progress-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progress-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+.progress-item label {
+  cursor: pointer;
+  user-select: none;
+}
+
+.available-exercises-summary {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 15px;
+  margin-top: 20px;
+  text-align: left;
+}
+
+.exercises-by-lesson {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lesson-exercises {
+  font-size: 0.9em;
+}
+
+.lesson-exercises strong {
+  color: #333;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.exercise-names {
+  color: #666;
+  margin-left: 15px;
 }
 
 .controls {
@@ -277,6 +444,17 @@ button.stop-button:hover:not(:disabled) {
   margin-bottom: 5px;
   border-radius: 4px;
   color: #333;
+}
+
+.example-link {
+  color: #007bff;
+  text-decoration: none;
+  margin-left: 8px;
+  font-size: 0.9em;
+}
+
+.example-link:hover {
+  text-decoration: underline;
 }
 
 .session-active-display .instruction {
