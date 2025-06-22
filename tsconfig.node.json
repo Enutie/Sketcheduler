@@ -1,20 +1,25 @@
-// tsconfig.node.json
 {
-  // "extends": "./tsconfig.json", // Optional: if you want to inherit from root compilerOptions
   "compilerOptions": {
-    "composite": true, // REQUIRED for project references
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "ES2022",
+    "lib": ["ES2023"],
     "module": "ESNext",
-    "moduleResolution": "Bundler", // Or "NodeNext" - modern resolution
-    "types": ["node"], // IMPORTANT: Includes Node.js global types
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true, // Recommended
-    "strict": true
-    // "noEmit": true, // For IDE only. For `vue-tsc -b`, referenced projects might need to emit.
-                       // To resolve TS6310 ("may not disable emit"), remove this line or set to false.
-                       // `vue-tsc -b` treats referenced projects as buildable parts.
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
   },
-  "include": [
-    "vite.config.ts",
-    // Add other Node-specific config files if any (e.g., vitest.config.ts)
-  ]
+  "include": ["vite.config.ts"]
 }

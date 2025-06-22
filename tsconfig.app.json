@@ -1,32 +1,15 @@
-// tsconfig.app.json
 {
-  // "extends": "./tsconfig.json", // Optional: if you want to inherit from root compilerOptions
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
   "compilerOptions": {
-    "composite": true, // REQUIRED for project references
-    "baseUrl": ".",    // IMPORTANT for path aliases
-    "paths": {
-      "@/*": ["./src/*"] // IMPORTANT: Defines the @ alias
-    },
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Bundler", // Or "NodeNext"
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "jsx": "preserve",
-    "resolveJsonModule": true, // IMPORTANT: For importing .json files
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+
+    /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noEmit": false // Or remove. Must allow emit for `vue-tsc -b` to generate .d.ts files.
+    "noUncheckedSideEffectImports": true
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "src/vite-env.d.ts" // Ensure Vite client types are included
-  ],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
 }
