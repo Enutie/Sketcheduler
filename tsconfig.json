@@ -1,15 +1,15 @@
+// tsconfig.json
 {
-  "files": [],
+  "files": [], // Important for solution-style tsconfig
+  "include": [], // Important: Your error TS6305 indicates this might currently include 'src/**/*.vue' which is wrong here.
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
   ],
-  "compilerOptions": {
-    "baseUrl": ".", // This is important
-    "paths": {
-      "@/*": ["src/*"] // Tells VS Code that @/* maps to src/* relative to baseUrl
-    }
-  },
-  "include": ["src/**/*.js", "src/**/*.vue"], // Adjust as needed
-  "exclude": ["node_modules", "dist"]
+  "compilerOptions": { // You can put some very base/shared options here if needed
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true
+    // "skipLibCheck": true, // Can be a temporary workaround, but better to fix types
+  }
 }
