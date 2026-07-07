@@ -6,8 +6,11 @@ const year = new Date().getFullYear()
   <footer class="footer">
     <div>© enutie {{ year }}</div>
     <div class="links">
-      <a href="https://enutie.com">home</a>
-      <a href="https://blog.enutie.com">blog</a>
+      <a href="https://blog.enutie.com/index.xml">rss</a>
+      <a href="https://github.com/Enutie">github</a>
+      <a href="https://enutie.github.io">bachelor project</a>
+      <a href="https://enutie.com">enutie.com</a>
+      <a href="https://blog.enutie.com">blog.enutie.com</a>
     </div>
   </footer>
 </template>
