@@ -8,6 +8,7 @@ const year = new Date().getFullYear()
     <div class="links">
       <a href="https://blog.enutie.com/index.xml">rss</a>
       <a href="https://github.com/Enutie">github</a>
+      <a href="https://enutie.github.io">bachelor project</a>
       <a href="https://enutie.com">enutie.com</a>
       <a href="https://blog.enutie.com">blog.enutie.com</a>
     </div>
