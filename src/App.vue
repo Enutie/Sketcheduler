@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import SiteBanner from './components/SiteBanner.vue'
-import SiteFooter from './components/SiteFooter.vue'
+import SiteBanner from '@enutie/design/SiteBanner.vue'
+import SiteFooter from '@enutie/design/SiteFooter.vue'
+import { installSystemThemeSync } from '@enutie/design/theme'
 import WarmupSession from './components/WarmupSession.vue'
+
+installSystemThemeSync()
 </script>
 
 <template>
-  <SiteBanner />
+  <SiteBanner suffix="/ sketcheduler" />
   <main class="shell">
     <WarmupSession />
   </main>
