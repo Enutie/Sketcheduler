@@ -1,0 +1,238 @@
+@import "./assets/tokens.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--body);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-head);
+  color: var(--text);
+  margin: 0;
+}
+
+a {
+  color: var(--red-text);
+}
+
+/* ---- banner ---- */
+
+.banner {
+  background: var(--red);
+  padding: 16px clamp(20px, 5vw, 48px);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--s2) var(--s3);
+}
+
+.banner-brand {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+}
+
+.banner-brand a {
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: 24px;
+  color: #f7f3ea;
+  text-decoration: none;
+}
+
+.banner-suffix {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #d9a8a0;
+}
+
+.banner-nav {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s3);
+}
+
+.banner-nav a,
+.banner-nav button {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 14px;
+  color: #d9a8a0;
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.banner-nav a:hover,
+.banner-nav button:hover {
+  color: #f7f3ea;
+}
+
+.theme-toggle {
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+  font-weight: 400 !important;
+}
+
+.brass-band {
+  height: var(--band);
+  background: var(--brass);
+}
+
+/* ---- shell ---- */
+
+.shell {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 24px 64px;
+}
+
+/* ---- section headers ---- */
+
+.section-header {
+  border-top: 2px solid var(--text);
+  padding-top: var(--s3);
+  margin-top: var(--s6);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--s2);
+}
+
+.section-header h2 {
+  font-weight: 800;
+  font-size: 24px;
+}
+
+.mono-note {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ---- buttons ---- */
+
+.btn {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 11px 22px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-primary {
+  background: var(--red);
+  color: #f7f3ea;
+  border: none;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #832222;
+}
+
+.btn-primary:disabled {
+  background: var(--muted);
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 2px solid var(--red-text);
+  color: var(--red-text);
+}
+
+[data-theme="dark"] .btn-secondary {
+  border-color: #5d5142;
+  color: #f0e9da;
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+  border-color: #93876f;
+}
+
+/* ---- chips (duration picker, after the blog tag-filter pattern) ---- */
+
+.chip {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  padding: 5px 10px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.chip:hover:not(:disabled) {
+  color: var(--red-text);
+  border-color: var(--red-text);
+}
+
+.chip.active {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+
+.chip:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* ---- cards ---- */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.card.banded {
+  border-top: 4px solid var(--red);
+}
+
+/* ---- footer ---- */
+
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: var(--s3) clamp(20px, 5vw, 48px);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--s2) var(--s3);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.site-footer a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: var(--red-text);
+}
+
+.site-footer nav {
+  display: flex;
+  gap: var(--s3);
+}

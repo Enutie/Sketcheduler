@@ -1,151 +1,161 @@
 <template>
-  <div class="warmup-session-container">
-    <h2>Drawabox Warm-up Session</h2>
+  <div>
+    <h1>The warm-up</h1>
+    <p class="page-sub">
+      Two or three exercises from the Drawabox work you've already done, against
+      a timer. Then you go draw.
+    </p>
 
-    <div class="progress-section">
-      <h3>Select Your Progress</h3>
-      <p class="progress-instruction">Check off the lessons and challenges you've completed:</p>
-      <div class="progress-options">
-        <div
-          v-for="lesson in allLessons"
-          :key="lesson.id"
-          class="progress-item"
+    <!-- ---- the session ---- -->
+    <section>
+      <div v-if="!allAvailableWarmups.length" class="empty-pool">
+        <p>
+          The pool is empty. Mark what you've finished under
+          <a href="#progress">Progress</a> below — every completed lesson or
+          challenge adds its exercises.
+        </p>
+      </div>
+
+      <template v-else>
+        <ul v-if="selectedExercises.length" class="exercise-cards">
+          <li
+            v-for="exercise in selectedExercises"
+            :key="exercise.id"
+            class="card banded exercise-card"
+          >
+            <span class="exercise-name">{{ exercise.name }}</span>
+            <a
+              v-if="exercise.examplePageUrl"
+              :href="exercise.examplePageUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="example-link"
+            >
+              example →
+            </a>
+          </li>
+        </ul>
+
+        <div v-if="isSessionActive" class="timer-block">
+          <span class="timer">{{ formattedTimeLeft }}</span>
+          <p class="timer-note">
+            do what you can of these in the time — quality of attempt over
+            quantity
+          </p>
+        </div>
+
+        <div class="controls">
+          <div class="duration-chips" role="group" aria-label="Session duration">
+            <button
+              v-for="minutes in DURATION_OPTIONS"
+              :key="minutes"
+              type="button"
+              class="chip"
+              :class="{ active: sessionDurationMinutes === minutes }"
+              :disabled="isSessionActive"
+              @click="sessionDurationMinutes = minutes"
+            >
+              {{ minutes }} min
+            </button>
+          </div>
+
+          <button
+            v-if="!isSessionActive"
+            class="btn btn-primary"
+            @click="handleGetOrStartWarmups"
+          >
+            {{ mainButtonText }}
+          </button>
+          <button
+            v-else
+            class="btn btn-secondary"
+            @click="stopWarmupSession(true)"
+          >
+            Stop early
+          </button>
+        </div>
+      </template>
+
+      <p v-if="sessionCompleteMessage" class="completion-message">
+        {{ sessionCompleteMessage }}
+      </p>
+    </section>
+
+    <!-- ---- the pool ---- -->
+    <section v-if="allAvailableWarmups.length">
+      <div class="section-header">
+        <h2>The pool</h2>
+        <span class="mono-note"
+          >{{ allAvailableWarmups.length }} exercises · fed by your
+          progress</span
+        >
+      </div>
+      <ul class="pool-list">
+        <li v-for="milestone in completedMilestonesData" :key="milestone.id">
+          <strong>{{ milestone.name }}</strong>
+          <span class="pool-exercises">{{
+            milestone.exercises.map((e) => e.name).join(' · ')
+          }}</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ---- progress ---- -->
+    <section id="progress">
+      <div class="section-header">
+        <h2>Progress</h2>
+        <span class="mono-note">mark what you've actually finished</span>
+      </div>
+      <div class="milestone-list">
+        <label
+          v-for="milestone in allMilestones"
+          :key="milestone.id"
+          class="milestone-item"
+          :class="{ checked: completedMilestones.includes(milestone.id) }"
         >
           <input
             type="checkbox"
-            :id="lesson.id"
-            v-model="completedLessons"
-            :value="lesson.id"
+            v-model="completedMilestones"
+            :value="milestone.id"
             @change="updateAvailableWarmups"
           />
-          <label :for="lesson.id">{{ lesson.name }}</label>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="!isSessionActive && !allAvailableWarmups.length" class="message info">
-      <p>Your warm-up pool is currently empty.</p>
-      <p>Select completed lessons above to add exercises to your warm-up pool.</p>
-    </div>
-
-    <div v-if="!isSessionActive && selectedExercises.length" class="selected-exercises-preview">
-      <h3>Your Warm-ups for this Session:</h3>
-      <ul>
-        <li v-for="exercise in selectedExercises" :key="exercise.id">
-          <span>{{ exercise.name }}</span>
-          <a
-            v-if="exercise.examplePageUrl"
-            :href="exercise.examplePageUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="example-link"
+          <span>{{ milestone.name }}</span>
+          <span class="mono-note"
+            >{{ milestone.exercises.length }}
+            {{ milestone.exercises.length === 1 ? 'exercise' : 'exercises' }}</span
           >
-            (View Example)
-          </a>
-        </li>
-      </ul>
-    </div>
-
-    <div class="controls">
-      <button
-        @click="handleGetOrStartWarmups"
-        :disabled="isSessionActive || (!allAvailableWarmups.length && !selectedExercises.length)"
-      >
-        {{ mainButtonText }}
-      </button>
-      <button
-        v-if="isSessionActive"
-        @click="stopWarmupSession(true)"
-        class="stop-button"
-      >
-        Stop Session Early
-      </button>
-    </div>
-
-    <div v-if="isSessionActive" class="session-active-display">
-      <h3>Now Warming Up ({{ formattedTimeLeft }} remaining):</h3>
-      <ul>
-        <li v-for="exercise in selectedExercises" :key="exercise.id">
-          <span>{{ exercise.name }}</span>
-          <a
-            v-if="exercise.examplePageUrl"
-            :href="exercise.examplePageUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="example-link"
-          >
-            (View Example)
-          </a>
-        </li>
-      </ul>
-      <p class="instruction">
-        Do what you can of these exercises in the allotted time.
-      </p>
-    </div>
-
-    <div v-if="sessionCompleteMessage" class="message completion">
-      {{ sessionCompleteMessage }}
-    </div>
-
-    <div class="settings">
-      <label for="sessionDuration">Session Duration (minutes): </label>
-      <select id="sessionDuration" v-model.number="sessionDurationMinutes" :disabled="isSessionActive">
-        <option value="1">1 (Test)</option>
-        <option value="10">10</option>
-        <option value="12">12</option>
-        <option value="15">15</option>
-      </select>
-    </div>
-
-    <div v-if="allAvailableWarmups.length" class="available-exercises-summary">
-      <h4>Available Exercises ({{ allAvailableWarmups.length }} total):</h4>
-      <div class="exercises-by-lesson">
-        <div v-for="lesson in completedLessonsData" :key="lesson.id" class="lesson-exercises">
-          <strong>{{ lesson.name }}:</strong>
-          <span class="exercise-names">{{ lesson.exercises.map(e => e.name).join(', ') }}</span>
-        </div>
+        </label>
       </div>
-    </div>
-
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 import warmupsData from '../data/warmups.json';
+import type { Exercise, Milestone, WarmupsData } from '../types/warmup';
 
-interface WarmupExercise {
-  id: number;
-  name: string;
-  examplePageUrl?: string;
-}
-
-interface Lesson {
-  id: string;
-  name: string;
-  exercises: WarmupExercise[];
-}
-
-interface WarmupsData {
-  lessons: Lesson[];
-}
-
+const DURATION_OPTIONS = [10, 12, 15] as const;
 const DEFAULT_SESSION_DURATION_MINUTES = 10;
 const EXERCISES_TO_PICK_MIN = 2;
 const EXERCISES_TO_PICK_MAX = 3;
+const PROGRESS_KEY = 'sketcheduler-progress';
+const LEGACY_PROGRESS_KEY = 'drawabox-progress';
 
-const allLessons = ref<Lesson[]>([]);
-const completedLessons = ref<string[]>([]);
-const allAvailableWarmups = ref<WarmupExercise[]>([]);
-const selectedExercises = ref<WarmupExercise[]>([]);
+const allMilestones = ref<Milestone[]>([]);
+const completedMilestones = ref<string[]>([]);
+const allAvailableWarmups = ref<Exercise[]>([]);
+const selectedExercises = ref<Exercise[]>([]);
 const sessionDurationMinutes = ref<number>(DEFAULT_SESSION_DURATION_MINUTES);
 const timeLeftSeconds = ref<number>(sessionDurationMinutes.value * 60);
 const isSessionActive = ref<boolean>(false);
 const timerId = ref<number | null>(null);
 const sessionCompleteMessage = ref<string>('');
 
-const completedLessonsData = computed<Lesson[]>(() => {
-  return allLessons.value.filter(lesson => completedLessons.value.includes(lesson.id));
+const completedMilestonesData = computed<Milestone[]>(() => {
+  return allMilestones.value.filter((milestone) =>
+    completedMilestones.value.includes(milestone.id),
+  );
 });
 
 const formattedTimeLeft = computed<string>(() => {
@@ -155,67 +165,67 @@ const formattedTimeLeft = computed<string>(() => {
 });
 
 const mainButtonText = computed<string>(() => {
-  if (isSessionActive.value) {
-    return `Session in Progress... (${formattedTimeLeft.value})`;
-  }
   if (selectedExercises.value.length > 0) {
-    return `Start ${sessionDurationMinutes.value}-Minute Warm-up Session`;
+    return `Start the ${sessionDurationMinutes.value}-minute session`;
   }
-  if (allAvailableWarmups.value.length === 0) {
-    return 'No Warm-ups Available';
-  }
-  return 'Get Warm-up Exercises';
+  return 'Pick exercises';
 });
 
 const loadProgress = (): void => {
-  const saved = localStorage.getItem('drawabox-progress');
+  const saved =
+    localStorage.getItem(PROGRESS_KEY) ??
+    localStorage.getItem(LEGACY_PROGRESS_KEY);
   if (saved) {
     try {
-      completedLessons.value = JSON.parse(saved);
+      completedMilestones.value = JSON.parse(saved);
     } catch (e) {
       console.warn('Failed to parse saved progress, starting fresh');
-      completedLessons.value = [];
+      completedMilestones.value = [];
     }
   }
 };
 
 const saveProgress = (): void => {
-  localStorage.setItem('drawabox-progress', JSON.stringify(completedLessons.value));
+  localStorage.setItem(
+    PROGRESS_KEY,
+    JSON.stringify(completedMilestones.value),
+  );
 };
 
 const updateAvailableWarmups = (): void => {
-  const availableExercises: WarmupExercise[] = [];
-  
-  completedLessons.value.forEach(lessonId => {
-    const lesson = allLessons.value.find(l => l.id === lessonId);
-    if (lesson) {
-      availableExercises.push(...lesson.exercises);
+  const availableExercises: Exercise[] = [];
+
+  completedMilestones.value.forEach((milestoneId) => {
+    const milestone = allMilestones.value.find((m) => m.id === milestoneId);
+    if (milestone) {
+      availableExercises.push(...milestone.exercises);
     }
   });
-  
+
   allAvailableWarmups.value = availableExercises;
-  selectedExercises.value = []; 
+  selectedExercises.value = [];
   sessionCompleteMessage.value = '';
   saveProgress();
 };
 
 onMounted(() => {
-  if (warmupsData && (warmupsData as WarmupsData).lessons && Array.isArray((warmupsData as WarmupsData).lessons)) {
-    allLessons.value = (warmupsData as WarmupsData).lessons;
+  const data = warmupsData as WarmupsData;
+  if (data && Array.isArray(data.milestones)) {
+    allMilestones.value = data.milestones;
   } else {
     console.warn('Warmups data is not in the expected format.');
-    allLessons.value = [];
+    allMilestones.value = [];
   }
-  
+
   loadProgress();
-  
+
   updateAvailableWarmups();
-  
+
   timeLeftSeconds.value = sessionDurationMinutes.value * 60;
 });
 
 onBeforeUnmount(() => {
-  stopWarmupSession(); 
+  stopWarmupSession();
 });
 
 watch(sessionDurationMinutes, (newDuration) => {
@@ -233,18 +243,25 @@ const pickExercisesForSession = (): void => {
   const pool = [...allAvailableWarmups.value];
   const numToPick = Math.min(
     pool.length,
-    Math.max(1, 
-      Math.floor(Math.random() * (EXERCISES_TO_PICK_MAX - EXERCISES_TO_PICK_MIN + 1)) + EXERCISES_TO_PICK_MIN
-    )
+    Math.max(
+      1,
+      Math.floor(
+        Math.random() * (EXERCISES_TO_PICK_MAX - EXERCISES_TO_PICK_MIN + 1),
+      ) + EXERCISES_TO_PICK_MIN,
+    ),
   );
 
-  const picked: WarmupExercise[] = [];
+  const picked: Exercise[] = [];
   const usedIndices = new Set<number>();
 
   let attempts = 0;
   const maxAttempts = pool.length * 2;
 
-  while (picked.length < numToPick && usedIndices.size < pool.length && attempts < maxAttempts) {
+  while (
+    picked.length < numToPick &&
+    usedIndices.size < pool.length &&
+    attempts < maxAttempts
+  ) {
     const randomIndex = Math.floor(Math.random() * pool.length);
     if (!usedIndices.has(randomIndex)) {
       picked.push(pool[randomIndex]);
@@ -253,35 +270,35 @@ const pickExercisesForSession = (): void => {
     attempts++;
   }
   selectedExercises.value = picked;
-  sessionCompleteMessage.value = ''; 
+  sessionCompleteMessage.value = '';
 };
 
 const startWarmupSession = (): void => {
   if (isSessionActive.value || selectedExercises.value.length === 0) return;
 
   isSessionActive.value = true;
-  timeLeftSeconds.value = sessionDurationMinutes.value * 60; 
+  timeLeftSeconds.value = sessionDurationMinutes.value * 60;
   sessionCompleteMessage.value = '';
 
   timerId.value = setInterval(() => {
     if (timeLeftSeconds.value > 0) {
       timeLeftSeconds.value--;
     } else {
-      stopWarmupSession(); 
-      sessionCompleteMessage.value = `🎉 ${sessionDurationMinutes.value}-minute warm-up session complete! Great job!`;
-      selectedExercises.value = []; 
+      stopWarmupSession();
+      sessionCompleteMessage.value = 'Session over. Go draw.';
+      selectedExercises.value = [];
     }
   }, 1000);
 };
 
 const stopWarmupSession = (early: boolean = false): void => {
-  if (timerId.value !== null) { 
+  if (timerId.value !== null) {
     clearInterval(timerId.value);
     timerId.value = null;
   }
   isSessionActive.value = false;
   if (early) {
-    sessionCompleteMessage.value = 'Warm-up session stopped early.';
+    sessionCompleteMessage.value = 'Stopped early — it happens.';
   }
 };
 
@@ -292,324 +309,187 @@ const handleGetOrStartWarmups = (): void => {
     startWarmupSession();
   }
 };
-
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-* {
-  box-sizing: border-box;
+h1 {
+  font-weight: 800;
+  font-size: clamp(28px, 5.5vw, 32px);
+  line-height: 1.1;
 }
 
-.warmup-session-container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: #f0f2f5; 
-  min-height: 100vh;
-  color: #333; 
+.page-sub {
+  margin: var(--s3) 0 var(--s5);
+  max-width: 560px;
+  color: var(--muted);
 }
 
-h2 {
-  color: #2c3e50;
-  margin-bottom: 30px;
-  font-size: 2rem; 
-  font-weight: 700;
-  text-align: center;
-  letter-spacing: -0.025em;
+/* ---- session ---- */
+
+.empty-pool {
+  border: 1px dashed var(--border);
+  padding: var(--s4);
+  font-size: 15px;
+  color: var(--muted);
 }
 
-h3 {
-  color: #2c3e50;
-  margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 1.25rem; 
+.empty-pool p {
+  margin: 0;
+}
+
+.empty-pool a {
+  color: var(--red-text);
   font-weight: 600;
+  text-decoration: none;
+  border-bottom: 2px solid var(--red-text);
 }
 
-h4 {
-  color: #555;
-  margin-top: 0;
-  margin-bottom: 10px;
-  font-size: 1rem; 
-  font-weight: 500;
-}
-
-.progress-section,
-.selected-exercises-preview,
-.session-active-display,
-.available-exercises-summary,
-.settings {
-  background-color: #ffffff; 
-  border: 1px solid #e0e0e0; 
-  border-radius: 8px; 
-  padding: 24px;
-  margin-bottom: 24px;
-  text-align: left;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); 
-}
-
-.progress-instruction {
-  color: #555;
-  margin-bottom: 16px;
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-.progress-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 12px;
-}
-
-.progress-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px;
-  border-radius: 6px;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-  background-color: #f9f9f9;
-  border: 1px solid #eee;
-}
-
-.progress-item:hover {
-  background-color: #f0f0f0;
-}
-
-.progress-item:has(input:checked) {
-  background-color: #10b981; 
-  border-color: #059669;
-  color: white;
-}
-.progress-item:has(input:checked) label {
-  color: white; 
-}
-
-
-.progress-item input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: #10b981;
-  cursor: pointer;
-}
-
-.progress-item label {
-  cursor: pointer;
-  user-select: none;
-  font-weight: 500;
-  color: #333; 
-}
-
-.available-exercises-summary {
-  margin-top: 24px;
-}
-
-.exercises-by-lesson {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.lesson-exercises {
-  font-size: 0.95rem;
-  padding: 12px;
-  background-color: #f9f9f9;
-  border-radius: 4px;
-  border-left: 3px solid #3b82f6;
-}
-
-.lesson-exercises strong {
-  color: #1f2937;
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-.exercise-names {
-  color: #555;
-  line-height: 1.5;
-}
-
-.controls {
-  margin: 24px 0;
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-button {
-  padding: 12px 24px; 
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  border-radius: 6px;
-  background-color: #3b82f6; 
-  color: white;
-  transition: background-color 0.2s ease;
-}
-
-button:hover:not(:disabled) {
-  background-color: #2563eb; 
-}
-
-button:active:not(:disabled) {
-  background-color: #1d4ed8; 
-}
-
-button:disabled {
-  background-color: #adb5bd; 
-  cursor: not-allowed;
-}
-
-button.stop-button {
-  background-color: #ef4444; 
-}
-
-button.stop-button:hover:not(:disabled) {
-  background-color: #dc2626; 
-}
-
-.selected-exercises-preview ul,
-.session-active-display ul {
+.exercise-cards {
   list-style: none;
+  margin: 0 0 var(--s4);
   padding: 0;
-  margin-bottom: 16px;
   display: grid;
-  gap: 10px;
+  gap: var(--s3);
 }
 
-.selected-exercises-preview li,
-.session-active-display li {
-  background-color: #f9f9f9;
-  padding: 16px;
-  border-radius: 6px;
-  color: #1f2937;
-  border-left: 3px solid #10b981; 
+.exercise-card {
+  padding: 18px 20px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--s2);
+}
+
+.exercise-name {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text);
 }
 
 .example-link {
-  color: #3b82f6;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--red-text);
   text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 500;
-  padding: 4px 8px;
-  background-color: #e7f3ff; 
-  border-radius: 4px;
-  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .example-link:hover {
-  background-color: #d1e7ff;
-  color: #1d4ed8;
+  color: var(--text);
 }
 
-.session-active-display {
-  border: 1px solid #10b981; 
+.timer-block {
+  margin-bottom: var(--s4);
 }
 
-.session-active-display .instruction {
-  font-style: italic;
-  color: #047857; 
-  margin-top: 16px;
-  font-size: 1rem;
-  text-align: center;
-  background-color: #e6fffa; 
-  padding: 12px;
-  border-radius: 4px;
-}
-
-.message {
-  padding: 16px 24px;
-  margin: 24px 0;
-  border-radius: 8px;
-  text-align: center;
+.timer {
+  font-family: var(--font-mono);
   font-weight: 500;
-  font-size: 1rem;
+  font-size: clamp(40px, 9vw, 64px);
+  color: var(--text);
+  line-height: 1;
 }
 
-.message.info {
-  background-color: #e0f2fe; 
-  color: #0c5464; 
-  border: 1px solid #b3e0f2;
+.timer-note {
+  margin: var(--s2) 0 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
 }
 
-.message.completion {
-  background-color: #d4edda; 
-  color: #155724; 
-  border: 1px solid #c3e6cb;
+.controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s3) var(--s4);
 }
 
-.settings {
-  text-align: center;
+.duration-chips {
+  display: flex;
+  gap: var(--s2);
 }
 
-.settings label {
-  margin-right: 12px;
-  font-weight: 500;
-  color: #374151;
+.completion-message {
+  margin: var(--s4) 0 0;
+  padding: var(--s3) var(--s4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--red);
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text);
 }
 
-.settings select {
-  padding: 10px 12px;
-  border-radius: 6px;
-  border: 1px solid #ced4da; 
-  background-color: white;
-  font-size: 0.95rem;
-  font-weight: 500;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+/* ---- pool ---- */
+
+.pool-list {
+  list-style: none;
+  margin: var(--s3) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s3);
+}
+
+.pool-list li {
+  border-bottom: 1px solid var(--border-faint);
+  padding-bottom: var(--s3);
+}
+
+.pool-list strong {
+  display: block;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.pool-exercises {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+/* ---- progress ---- */
+
+.milestone-list {
+  margin-top: var(--s3);
+  display: grid;
+  gap: var(--s2);
+}
+
+.milestone-item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2) var(--s3);
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+}
+
+.milestone-item.checked {
+  border-left: 4px solid var(--brass);
+  padding-left: 13px;
+}
+
+.milestone-item input[type='checkbox'] {
+  accent-color: var(--red);
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  align-self: center;
   cursor: pointer;
 }
 
-.settings select:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25); 
-}
-
-.settings select:hover {
-  border-color: #adb5bd;
-}
-
-@media (max-width: 640px) {
-  .warmup-session-container {
-    padding: 16px;
-  }
-  
-  h2 {
-    font-size: 1.75rem; 
-    margin-bottom: 24px;
-  }
-  
-  .progress-section,
-  .selected-exercises-preview,
-  .session-active-display,
-  .message,
-  .settings {
-    padding: 16px;
-  }
-  
-  .progress-options {
-    grid-template-columns: 1fr; 
-  }
-  
-  .controls {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  button {
-    width: 100%;
-    max-width: 300px; 
-  }
+.milestone-item > span:first-of-type {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text);
+  flex: 1;
 }
 </style>
